@@ -20,7 +20,7 @@ var Covy = function(options) {
     ui: process.env['UI'] || options.ui || 'bdd',
     growl: true
   });
-  if (this.mocha.options.reporter.match('cov')) {
+  if (process.env['FORCE_COV'] || this.mocha.options.reporter.match('cov')) {
     this.blanket();
   }
   this.files();
