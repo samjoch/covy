@@ -42,9 +42,13 @@ Covy.prototype = {
   },
   run: function() {
     this.mocha.run(function(failures) {
-      process.stdout.on('drain', function() {
+      if(!process.stdout.bufferSize) {
         process.exit(failures);
-      });
+      } else {
+        process.stdout.on('drain', function() {
+          process.exit(failures);
+        });
+      }
     });
   }
 };
