@@ -1,6 +1,6 @@
 {
   "name": "covy",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Covy configures a test environment using Mocha, Chai, Sinon & Blanket",
   "main": "index.js",
   "repository": {
