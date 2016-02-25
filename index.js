@@ -1,57 +1,80 @@
-
+//
+// load core modules
+//
 var fs = require('fs');
 var path = require('path');
+var EventEmitter = require('events');
+var inherits = require('util').inherits;
 
-var mocha = require('mocha');
+//
+// load third-party modules
+//
+var Mocha = require('mocha');
+
+//
+// register global variables
+//
 GLOBAL.sinon = require('sinon');
-var chai = require('chai');
-var sinonChai = require('sinon-chai');
+var chai = GLOBAL.chai = require('chai');
+
+var sinonChai = GLOBAL.sinonChai = require('sinon-chai');
 chai.use(sinonChai);
+
 GLOBAL.expect = chai.expect;
 
-var Covy = function(options) {
+//
+// Declare Covy
+//
+function Covy (options) {
+  EventEmitter.call(this);
   options = options || {};
+  options.mocha = options.mocha || {};
+
   this.blanketOptions = options.blanket;
   this.path = options.path;
   this.ext = options.ext || '.test.js';
-  this.mocha = new mocha({
-    reporter: process.env['REPORTER'] || options.reporter || 'nyan',
-    grep: process.env['GREP'] || options.grep,
-    ui: process.env['UI'] || options.ui || 'bdd',
-    growl: true
-  });
-  if (process.env['FORCE_COV'] || this.mocha.options.reporter.match('cov')) {
+
+  options.mocha.reporter = options.mocha.reporter || 'nyan';
+  options.mocha.ui = options.mocha.ui || 'bdd';
+
+  this.mocha = new Mocha(options.mocha);
+
+  if (options.force_cov || this.mocha.options.reporter.match('cov')) {
     this.blanket();
   }
-  this.files();
+
+  this.files()
+    .forEach(this.mocha.addFile.bind(this.mocha));
+
   this.run();
+}
+
+inherits(Covy, EventEmitter);
+
+Covy.prototype.blanket = function blanket () {
+  return require('blanket')(this.blanketOptions);
 };
 
-Covy.prototype = {
-  blanket: function() {
-    var blanket = require('blanket')(this.blanketOptions);
-  },
-  files: function() {
-    var files = fs.readdirSync(this.path).filter(function(f) {
+Covy.prototype.files = function files () {
+  return fs.readdirSync(this.path)
+    .filter(function (f) {
       return f.substr(~this.ext.length + 1) === this.ext;
+    }.bind(this))
+    .map(function (file) {
+      return path.join(this.path, file);
     }.bind(this));
-    files.forEach(function(file) {
-      file = path.join(this.path, file);
-      this.mocha.addFile(file);
-    }.bind(this));
-  },
-  run: function() {
-    this.mocha.run(function(failures) {
-      if(!process.stdout.bufferSize) {
-        process.exit(failures);
-      } else {
-        process.stdout.on('drain', function() {
-          process.exit(failures);
-        });
-      }
-    });
-  }
+};
+
+Covy.prototype.run = function run () {
+  this.mocha.run(function (failures) {
+    if (!process.stdout.bufferSize) {
+      this.emit('end', failures);
+    } else {
+      process.stdout.on('drain', function () {
+        this.emit('end', failures);
+      }.bind(this));
+    }
+  }.bind(this));
 };
 
 module.exports = Covy;
-

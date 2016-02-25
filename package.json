@@ -1,8 +1,9 @@
 {
   "name": "covy",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Covy configures a test environment using Mocha, Chai, Sinon & Blanket",
   "main": "index.js",
+  "bin": "./bin/covy",
   "repository": {
     "url": "https://github.com/samjoch/covy.git",
     "type": "git"

@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+
+var path = require('path');
+
+var Covy = require('../index');
+
+var covy = new Covy({
+  path: path.join(process.cwd(), 'test'),
+  ext: process.env['EXT'],
+  force_cov: process.env['FORCE_COV'],
+  blanket: {
+    'data-cover-never': 'node_modules',
+    'spec-cov': {
+      threshold: 15,
+      localThreshold: 15
+    },
+    pattern: ['src']
+  },
+  mocha: {
+    reporter: process.env['REPORTER'],
+    grep: process.env['GREP'],
+    ui: process.env['UI']
+  }
+});
+
+covy.on('end', function (failures) {
+  process.exit(failures);
+});
