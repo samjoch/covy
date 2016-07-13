@@ -1,9 +1,12 @@
 {
   "name": "covy",
   "version": "2.0.0",
-  "description": "Covy configures a test environment using Mocha, Chai, Sinon & Blanket",
+  "description": "Covy configures a test environment using Mocha, Chai, Sinon & Istanbul",
   "main": "index.js",
-  "bin": "./bin/covy",
+  "bin": {
+    "covy": "./bin/covy",
+    "istanbul": "node_modules/istanbul/lib/cli.js"
+  },
   "repository": {
     "url": "https://github.com/samjoch/covy.git",
     "type": "git"
@@ -14,7 +17,7 @@
   "author": "Sam Joch",
   "license": "ISC",
   "dependencies": {
-    "blanket": "^1.2.1",
+    "istanbul": "^0.4.4",
     "chai": "^3.4.1",
     "coffee-script": "^1.10.0",
     "mocha": "^2.3.4",
