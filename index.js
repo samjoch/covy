@@ -30,7 +30,6 @@ function Covy (options) {
   options = options || {};
   options.mocha = options.mocha || {};
 
-  this.blanketOptions = options.blanket;
   this.path = options.path;
   this.ext = options.ext || '.test.js';
 
@@ -39,10 +38,6 @@ function Covy (options) {
 
   this.mocha = new Mocha(options.mocha);
 
-  if (options.force_cov || this.mocha.options.reporter.match('cov')) {
-    this.blanket();
-  }
-
   this.files()
     .forEach(this.mocha.addFile.bind(this.mocha));
 
@@ -50,10 +45,6 @@ function Covy (options) {
 }
 
 inherits(Covy, EventEmitter);
-
-Covy.prototype.blanket = function blanket () {
-  return require('blanket')(this.blanketOptions);
-};
 
 Covy.prototype.files = function files () {
   return fs.readdirSync(this.path)
