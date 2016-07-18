@@ -18,6 +18,6 @@ Add those scripts in your `package.json`:
 ```json
 "scripts:" {
   "test": "covy",
-  "cov": "istanbul cov covy"
+  "cov": "istanbul cov ./node_modules/.bin/covy"
 }
 ```
