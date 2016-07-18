@@ -1,7 +1,7 @@
 Covy
 ----
 
-Covy configures a test environment using Mocha, Chai, Sinon & Blanket
+Covy configures a test environment using Mocha, Chai, Sinon & Istanbul
 
 ## Installation
 
@@ -11,36 +11,13 @@ npm install covy
 
 ## Getting started
 
-By default `mocha` use a `./test` directory, so you should have one.
+`covy` use the `./test` directory and search for all `.test.js` files.
 
-Then create a `index.js`:
-
-```javascript
-var Covy = require('covy');
-
-new Covy({
-  path: __dirname,
-  blanket: {
-    'data-cover-never': 'node_modules',
-    'spec-cov': {
-      threshold: 15,
-      localThreshold: 15
-    },
-    pattern: [
-      'server.js',
-      'lib',
-      // others files/directories you want to code coverage.
-    ]
-  }
-});
-```
-
-then add those scripts in your `package.json`:
+Add those scripts in your `package.json`:
 
 ```json
 "scripts:" {
-  "test": "node test/index.js",
-  "cov": "REPORTER=html-cov node test/index.js > cov.html && open cov.html"
+  "test": "covy",
+  "cov": "istanbul cov covy"
 }
 ```
-
