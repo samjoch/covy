@@ -28,15 +28,20 @@ GLOBAL.expect = chai.expect;
 function Covy (options) {
   EventEmitter.call(this);
   options = options || {};
-  options.mocha = options.mocha || {};
 
-  this.path = options.path;
-  this.ext = options.ext || '.test.js';
+  this.options = {
+    path: options.path || path.join(process.cwd(), 'test'),
+    ext: process.env['EXT'] || options.ext || '.test.js',
+    reporter: process.env['REPORTER'] || options.reporter || 'nyan',
+    grep: process.env['GREP'] || options.grep,
+    ui: process.env['UI'] || options.ui || 'bdd'
+  };
 
-  options.mocha.reporter = options.mocha.reporter || 'nyan';
-  options.mocha.ui = options.mocha.ui || 'bdd';
-
-  this.mocha = new Mocha(options.mocha);
+  this.mocha = new Mocha({
+    reporter: this.options.reporter,
+    grep: this.options.grep,
+    ui: this.options.ui
+  });
 
   this.files()
     .forEach(this.mocha.addFile.bind(this.mocha));
@@ -47,12 +52,12 @@ function Covy (options) {
 inherits(Covy, EventEmitter);
 
 Covy.prototype.files = function files () {
-  return fs.readdirSync(this.path)
+  return fs.readdirSync(this.options.path)
     .filter(function (f) {
-      return f.substr(~this.ext.length + 1) === this.ext;
+      return f.substr(~this.options.ext.length + 1) === this.options.ext;
     }.bind(this))
     .map(function (file) {
-      return path.join(this.path, file);
+      return path.join(this.options.path, file);
     }.bind(this));
 };
 
