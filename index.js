@@ -34,7 +34,8 @@ function Covy (options) {
     ext: process.env['EXT'] || options.ext || '.test.js',
     reporter: process.env['REPORTER'] || options.reporter || 'nyan',
     grep: process.env['GREP'] || options.grep,
-    ui: process.env['UI'] || options.ui || 'bdd'
+    ui: process.env['UI'] || options.ui || 'bdd',
+    onEndExit: options.onEndExit || true
   };
 
   this.mocha = new Mocha({
@@ -64,13 +65,16 @@ Covy.prototype.files = function files () {
 Covy.prototype.run = function run () {
   this.mocha.run(function (failures) {
     if (!process.stdout.bufferSize) {
-      this.emit('end', failures);
+      this._end(failures);
     } else {
-      process.stdout.on('drain', function () {
-        this.emit('end', failures);
-      }.bind(this));
+      process.stdout.on('drain', this._end.bind(this, failures));
     }
   }.bind(this));
+};
+
+Covy.prototype._end = function _end (failures) {
+  this.emit('end', failures);
+  if (this.options.onEndExit) { process.exit(failures); }
 };
 
 module.exports = Covy;

@@ -2,8 +2,4 @@
 
 var Covy = require('../index');
 
-var covy = new Covy();
-
-covy.on('end', function (failures) {
-  process.exit(failures);
-});
+GLOBAL.covy = new Covy();
