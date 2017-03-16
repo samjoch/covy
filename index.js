@@ -14,13 +14,13 @@ var Mocha = require('mocha');
 //
 // register global variables
 //
-GLOBAL.sinon = require('sinon');
-var chai = GLOBAL.chai = require('chai');
+global.sinon = require('sinon');
+var chai = global.chai = require('chai');
 
-var sinonChai = GLOBAL.sinonChai = require('sinon-chai');
+var sinonChai = global.sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
-GLOBAL.expect = chai.expect;
+global.expect = chai.expect;
 
 //
 // Declare Covy
